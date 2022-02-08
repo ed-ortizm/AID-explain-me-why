@@ -1,4 +1,5 @@
 import numpy as np
+###############################################################################
 class GalaxyPlus:
     """
     Class to add all pixel values in an image
@@ -7,4 +8,7 @@ class GalaxyPlus:
         pass
 
     def predict(self, image: np.array)->float:
-        pass
+        # normalize pixels' space
+        image *= 1/image.max()
+
+        return np.sum(image)
