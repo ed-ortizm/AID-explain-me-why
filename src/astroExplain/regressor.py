@@ -14,7 +14,7 @@ class GalaxyPlus:
         image = self._update_dimension(image)
 
         # predict and normalize
-        prediction = np.sum(image, axis=(1,2,3)) / image[0, :].size
+        prediction = np.sum(image, axis=(1,2,3)) #/ image[0, :].size
         # print(prediction.shape)
 
         return prediction
