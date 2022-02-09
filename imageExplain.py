@@ -41,9 +41,9 @@ print(galaxy.shape)
 explanation = explainer.explain_instance(
     image=galaxy,
     classifier_fn=addGalaxy.predict,
-    labels=(1,),
+    labels=(None,),
     # hide_color=0,
-    # top_labels=None,
+    top_labels=None,
     # num_features=5,
     # num_features=10,
     num_samples=1000,

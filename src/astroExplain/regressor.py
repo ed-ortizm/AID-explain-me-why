@@ -15,6 +15,7 @@ class GalaxyPlus:
 
         # predict and normalize
         prediction = np.sum(image, axis=(1,2,3)) / image[0, :].size
+        # print(prediction.shape)
 
         return prediction
 
