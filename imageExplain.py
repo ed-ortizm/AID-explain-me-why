@@ -2,6 +2,7 @@ from configparser import ConfigParser, ExtendedInterpolation
 import time
 from PIL import Image
 import pickle
+import os
 
 from lime import lime_image
 import numpy as np
@@ -51,21 +52,22 @@ explanation = explainer.explain_instance(
     segmentation_fn=None,
     distance_metric="cosine",
 )
-with open(f"{name_galaxy}Explanation.pkl", "wb") as file:
-    pickle.dump(explanation, file)
+# with open(f"{name_galaxy}Explanation.pkl", "wb") as file:
+#     pickle.dump(explanation, file)
 ###############################################################################
-# print("Inpect explanation", end="\n")
-# save_to = parser.get("directory", "output")
-# # save image with positive contributing meaningful features
-# temp, mask = explanation.get_image_and_mask(
-#     # explanation.top_labels[0],
-#     positive_only=True,
-#     num_features=5,
-#     hide_rest=True
-# )
-#
-# galaxyExplanation = mark_boundaries(temp / 2 + 0.5, mask)
-# np.save(f"{save_to}/{name_galaxy}_positive.npy", galaxyExplanation)
+print("Inpect explanation", end="\n")
+save_to = parser.get("directory", "output")
+
+# save image with positive contributing meaningful features
+temp, mask = explanation.get_image_and_mask(
+    label=None,
+    positive_only=True,
+    num_features=5,
+    hide_rest=True
+)
+
+galaxyExplanation = mark_boundaries(temp / 2 + 0.5, mask)
+np.save(f"{save_to}/{name_galaxy}_positive.npy", galaxyExplanation)
 # ###########################################################
 # # save whole image with boundaries
 # temp, mask = explanation.get_image_and_mask(
