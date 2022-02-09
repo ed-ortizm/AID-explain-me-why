@@ -11,4 +11,7 @@ class GalaxyPlus:
         # normalize pixels' space
         image *= 1/image.max()
 
-        return np.sum(image)
+        # normalize addition
+        prediction = np.sum(image)/image.size
+
+        return prediction
