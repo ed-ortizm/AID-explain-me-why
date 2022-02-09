@@ -17,7 +17,7 @@ class GalaxyPlus:
         prediction = np.sum(image, axis=(1,2,3)) #/ image[0, :].size
         # print(prediction.shape)
 
-        return prediction
+        return prediction.reshape((-1,1))
 
     def _update_dimension(self, image:np.array) -> np.array:
 
