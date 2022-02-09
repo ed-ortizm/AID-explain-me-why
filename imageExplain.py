@@ -47,7 +47,7 @@ from lime.wrappers.scikit_image import SegmentationAlgorithm
 segmentation_fn = SegmentationAlgorithm(
     'quickshift',
     kernel_size=4,
-    max_dist=100,
+    max_dist=200,
     ratio=0.2,
     random_seed=0,
     sigma=0
