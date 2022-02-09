@@ -25,14 +25,15 @@ print("Explain GalaxyPlus model", end="\n")
 # Load model
 addGalaxy = GalaxyPlus()
 # Set explainer instance
-explainer = lime_image.LimeImageExplainer()
+explainer = lime_image.LimeImageExplainer(feature_selection="'highest_weights'")
 # get explanation
 explanation = explainer.explain_instance(
     image=galaxy,
     classifier_fn=addGalaxy.predict,
-    # top_labels=5,
+    top_labels=None,
     hide_color=0,
-    num_samples=100
+    num_features=1_000,
+    num_samples=1000
 )
 ###############################################################################
 print("Inpect explanation", end="\n")
