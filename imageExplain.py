@@ -1,12 +1,14 @@
 from configparser import ConfigParser, ExtendedInterpolation
 import time
 from PIL import Image
+import pickle
 
 from lime import lime_image
 import numpy as np
 from skimage.segmentation import mark_boundaries
 
 from astroExplain.regressor import GalaxyPlus
+
 ###############################################################################
 start_time = time.time()
 parser = ConfigParser(interpolation=ExtendedInterpolation())
@@ -18,26 +20,39 @@ print("Load galaxy image", end="\n")
 input_directory = parser.get("directory", "input")
 name_galaxy = parser.get("file", "galaxy")
 
-galaxy = np.array(Image.open("data/NGC3432.jpg")).astype(float)
+galaxy = np.array(Image.open(f"{input_directory}/{name_galaxy}")).astype(float)
+# normalize pixel space
+galaxy *= 1 / galaxy.max()
 
 ###############################################################################
-print("Explain GalaxyPlus model", end="\n")
 # Load model
 addGalaxy = GalaxyPlus()
 # Set explainer instance
 explainer = lime_image.LimeImageExplainer(
-    kernel_width=0.25, # default is .25
-    feature_selection="highest_weights"
+    # default is .25, if None sqrt(number of columns) * 0.75
+    kernel_width=0.25,
+    # "forward_selection" if feature <=6, "highest_weights" otherwise
+    feature_selection="auto",
+    random_state=0,
 )
+print("Explain GalaxyPlus model", end="\n")
 # get explanation
+print(galaxy.shape)
 explanation = explainer.explain_instance(
     image=galaxy,
     classifier_fn=addGalaxy.predict,
-    top_labels=None,
-    hide_color=0,
-    num_features=1_000,
-    num_samples=1000
+    labels=(1,),
+    # hide_color=0,
+    # top_labels=None,
+    # num_features=5,
+    # num_features=10,
+    num_samples=1000,
+    batch_size=10,
+    segmentation_fn=None,
+    distance_metric="cosine",
 )
+with open(f"{name_galaxy}Explanation.pkl", "wb") as file:
+    pickle.dump(explanation, file)
 ###############################################################################
 # print("Inpect explanation", end="\n")
 # save_to = parser.get("directory", "output")

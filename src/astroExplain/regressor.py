@@ -1,17 +1,26 @@
 import numpy as np
+
 ###############################################################################
 class GalaxyPlus:
     """
     Class to add all pixel values in an image
     """
+
     def __init__(self):
         pass
 
-    def predict(self, image: np.array)->float:
-        # normalize pixels' space
-        image *= 1/image.max()
+    def predict(self, image: np.array) -> np.array:
 
-        # normalize addition
-        prediction = np.sum(image)/image.size
+        image = self._update_dimension(image)
+
+        # predict and normalize
+        prediction = np.sum(image, axis=(1,2,3)) / image[0, :].size
 
         return prediction
+
+    def _update_dimension(self, image:np.array) -> np.array:
+
+        if image.ndim == 3:
+            return image[np.newaxis, ...]
+
+        return image
