@@ -7,7 +7,6 @@ import os
 from lime import lime_image
 from lime.wrappers.scikit_image import SegmentationAlgorithm
 import numpy as np
-from skimage.segmentation import mark_boundaries
 
 from astroExplain.regressor import GalaxyPlus
 
