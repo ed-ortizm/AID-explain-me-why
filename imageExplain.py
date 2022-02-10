@@ -52,6 +52,7 @@ segmentation_fn = SegmentationAlgorithm(
     random_seed=0,
     sigma=0
     )
+
 explanation = explainer.explain_instance(
     image=galaxy,
     classifier_fn=addGalaxy.predict,
@@ -60,13 +61,13 @@ explanation = explainer.explain_instance(
     top_labels=1,
     # num_features=20,
     # num_features=1000, # default= 100000
-    num_samples=1000,
-    batch_size=10,
+    num_samples=10_000,
+    batch_size=100,
     # segmentation_fn=SegmentationAlgorithm('slic'),
     segmentation_fn =segmentation_fn
     # distance_metric="cosine",
 )
-with open(f"{name_galaxy.split('.')[0]}Explanation.pkl", "wb") as file:
+with open(f"data/output/{name_galaxy.split('.')[0]}Explanation.pkl", "wb") as file:
     pickle.dump(explanation, file)
 ###############################################################################
 print("Inpect explanation", end="\n")
@@ -75,22 +76,21 @@ print("Inpect explanation", end="\n")
 temp, mask = explanation.get_image_and_mask(
     label=explanation.top_labels[0],
     positive_only=False,
-    num_features=10,
+    num_features=100,
     hide_rest=False,
-    min_weight = -100
+   # min_weight = -100
 )
 
-# galaxyExplanation = mark_boundaries(temp / 2 + 0.5, mask)
 galaxyExplanation = mark_boundaries(temp, mask)
-import matplotlib.pyplot as plt
-plt.imshow(galaxyExplanation)
-plt.show()
+#import matplotlib.pyplot as plt
+#plt.imshow(galaxyExplanation)
+#plt.show()
 
 ###############################################################################
-# save_to = parser.get("directory", "output")
-# if os.path.exists(save_to) is False:
-#     os.mkdir(save_to)
-# np.save(f"{save_to}/{name_galaxy}_positive.npy", galaxyExplanation)
+save_to = parser.get("directory", "output")
+if os.path.exists(save_to) is False:
+    os.mkdir(save_to)
+np.save(f"{save_to}/{name_galaxy}_allExp.npy", galaxyExplanation)
 
 # heatmap visualization
 # code from lime repo
@@ -106,8 +106,8 @@ heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
 #Plot. The visualization makes more sense if a symmetrical colorbar is used.
 plt.imshow(heatmap, cmap = 'RdBu', vmin  = -heatmap.max(), vmax = heatmap.max())
 plt.colorbar()
-plt.show()
-# plt.savefig(f"{save_to}/{name_galaxy}_heatMap.png")
+#plt.show()
+plt.savefig(f"{save_to}/{name_galaxy}_heatMap.png")
 ###############################################################################
 finish_time = time.time()
 print(f"Run time: {finish_time-start_time:.2f}")
