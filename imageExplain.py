@@ -36,43 +36,40 @@ else:
 galaxy *= 1 / galaxy.max()
 
 ###############################################################################
+output_directory = parser.get("directory", "output")
 # Load model
 addGalaxy = GalaxyPlus()
+
 # Set explainer instance
-explainer = lime_image.LimeImageExplainer(
-    # default is .25, if None sqrt(number of columns) * 0.75
-    # kernel_width=,
-    # "forward_selection" if feature <=6, "highest_weights" otherwise
-    # feature_selection=None,
-    # random_state=0,
-)
-print("Explain GalaxyPlus model", end="\n")
-# get explanation
-segmentation_fn = SegmentationAlgorithm(
-    'quickshift',
-    kernel_size=4,
-    max_dist=200,
-    ratio=0.2,
-    random_seed=0,
-    sigma=0
+explainer = lime_image.LimeImageExplainer(random_state=0)
+
+for segmentation in ["slic", "quickshift", "felzenszwalb"]:
+
+    segmentation_fn = SegmentationAlgorithm('quickshift')
+
+    print(f"Explain with segmentation: {segmentation}", end="\n")
+    # get explanation
+
+    explanation = explainer.explain_instance(
+        image=galaxy,
+        classifier_fn=addGalaxy.predict,
+        labels=None,
+        hide_color=0,
+        top_labels=1,
+        # num_features=1000, # default= 100000
+        num_samples=1_000,
+        batch_size=10,
+        segmentation_fn =segmentation_fn
+        # distance_metric="cosine",
     )
 
-explanation = explainer.explain_instance(
-    image=galaxy,
-    classifier_fn=addGalaxy.predict,
-    labels=None,
-    hide_color=0,
-    top_labels=1,
-    # num_features=20,
-    # num_features=1000, # default= 100000
-    num_samples=10_000,
-    batch_size=100,
-    # segmentation_fn=SegmentationAlgorithm('slic'),
-    segmentation_fn =segmentation_fn
-    # distance_metric="cosine",
-)
-with open(f"data/output/{name_galaxy.split('.')[0]}Explanation.pkl", "wb") as file:
-    pickle.dump(explanation, file)
+    print(f"Finish explanation... Saving...", end="\n")
+
+    save_name = f"{name_galaxy}Explanation{segmentation.capitalize()}"
+
+    with open(f"{output_directory}/{save_name}.pkl", "wb") as file:
+
+        pickle.dump(explanation, file)
 ###############################################################################
 print("Inpect explanation", end="\n")
 
