@@ -5,6 +5,7 @@ import pickle
 import os
 
 from lime import lime_image
+from lime.wrappers.scikit_image import SegmentationAlgorithm
 import numpy as np
 from skimage.segmentation import mark_boundaries
 
@@ -19,14 +20,18 @@ parser.read("imageExplain.ini")
 print("Load galaxy image", end="\n")
 
 input_directory = parser.get("directory", "input")
-name_galaxy = parser.get("file", "galaxy")
+file_name = parser.get("file", "galaxy")
+name_galaxy, in_format = file_name.split(".")
 
-if name_galaxy.split(".")[-1] == "npy":
-    galaxy = np.load(f"{input_directory}/{name_galaxy}")
+if in_format == "npy":
+
+    galaxy = np.load(f"{input_directory}/{file_name}")
+
 else:
     galaxy = np.array(
-        Image.open(f"{input_directory}/{name_galaxy}")
-    ).astype(float)
+        Image.open(f"{input_directory}/{file_name}"),
+        dtype=float
+    )
 # normalize pixel space
 galaxy *= 1 / galaxy.max()
 
@@ -43,7 +48,6 @@ explainer = lime_image.LimeImageExplainer(
 )
 print("Explain GalaxyPlus model", end="\n")
 # get explanation
-from lime.wrappers.scikit_image import SegmentationAlgorithm
 segmentation_fn = SegmentationAlgorithm(
     'quickshift',
     kernel_size=4,
