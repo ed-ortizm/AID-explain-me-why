@@ -35,6 +35,10 @@ galaxy *= 1 / galaxy.max()
 
 ###############################################################################
 output_directory = parser.get("directory", "output")
+
+if os.path.exists(output_directory) is False:
+    os.makedirs(output_directory)
+
 # Load model
 addGalaxy = GalaxyPlus()
 
