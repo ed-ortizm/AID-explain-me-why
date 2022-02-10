@@ -66,5 +66,11 @@ class TellMeWhy:
         if save_map is True:
 
             plt.savefig(f"{save_to}/{galaxy_name}HeatMapExp.{save_format}")
+    ###########################################################################
+    def segmentation(self, show_segmentation: bool=True):
 
+        segmented_image = mark_boundaries(self.galaxy, self.segments)
+
+        if show_segmentation is True:
+            plt.imshow(segmented_image)
 ###############################################################################
