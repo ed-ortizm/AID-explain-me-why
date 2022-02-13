@@ -4,7 +4,7 @@ with open("README.md", "r") as file:
     long_description = file.read()
 
 setup(
-    name="astroExplain",
+    name="astroxAID",
     version="0.0.1",
     author="Edgar Ortiz",
     author_email="ed.ortizm@gmail.com",

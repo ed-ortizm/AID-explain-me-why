@@ -8,7 +8,7 @@ from lime import lime_image
 from lime.wrappers.scikit_image import SegmentationAlgorithm
 import numpy as np
 
-from astroExplain.regressor import GalaxyPlus
+from astroxAID.regressor import GalaxyPlus
 
 ###############################################################################
 start_time = time.time()
